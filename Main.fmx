@@ -1,0 +1,44 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'ViewerSDIF'
+  ClientHeight = 600
+  ClientWidth = 800
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object MainMenu1: TMainMenu
+    Left = 45
+    Top = 25
+    object MenuItem1: TMenuItem
+      Text = #12501#12449#12452#12523'(F)'
+      object MenuItem2: TMenuItem
+        Locked = True
+        ShortCut = 16463
+        Text = #38283#12367'...'
+        OnClick = MenuItem2Click
+        object OpenDialog1: TOpenDialog
+          Left = 45
+          Top = 85
+        end
+      end
+    end
+  end
+  object TreeView1: TTreeView
+    Align = Client
+    Margins.Left = 10.000000000000000000
+    Margins.Top = 10.000000000000000000
+    Margins.Right = 10.000000000000000000
+    Margins.Bottom = 10.000000000000000000
+    Size.Width = 780.000000000000000000
+    Size.Height = 580.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Viewport.Width = 776.000000000000000000
+    Viewport.Height = 576.000000000000000000
+  end
+end
