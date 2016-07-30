@@ -9,6 +9,7 @@ uses
   LUX.Graph.Tree in '_LIBRARY\LUXOPHIA\LUX.Graph\LUX.Graph.Tree.pas',
   LUX.Audio.SDIF in '_LIBRARY\LUXOPHIA\LUX.Audio.SDIF\LUX.Audio.SDIF.pas',
   LUX.Audio.SDIF.Frames in '_LIBRARY\LUXOPHIA\LUX.Audio.SDIF\LUX.Audio.SDIF.Frames.pas',
+  LUX.Audio.SDIF.Frames.ASO1 in '_LIBRARY\LUXOPHIA\LUX.Audio.SDIF\LUX.Audio.SDIF.Frames.ASO1.pas',
   LUX.Audio.SDIF.Matrixs in '_LIBRARY\LUXOPHIA\LUX.Audio.SDIF\LUX.Audio.SDIF.Matrixs.pas';
 
 {$R *.res}

@@ -22,7 +22,7 @@ type
     { private 宣言 }
   public
     { public 宣言 }
-    _FileSDIF :TFileSDIF;
+    _FileSDIF :TFileSDIF<TFrameSDIF>;
     ///// メソッド
     procedure ShowSDIF;
   end;
@@ -105,7 +105,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-     _FileSDIF := TFileSDIF.Create;
+     _FileSDIF := TFileSDIF<TFrameSDIF>.Create;
 
      _FileSDIF.LoadFromFileBin( '..\..\_DATA\Treatments11.trt' );
 
