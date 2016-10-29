@@ -98,7 +98,7 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TMatrixSDIF
 
-     TMatrixSDIF = class( TTreeNode<TMatrixSDIF> )
+     TMatrixSDIF = class( TTreeLeaf<TMatrixSDIF> )
      private
        class var _Reg :TRegEx;
      protected
@@ -133,7 +133,7 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TFrameSDIF
 
-     TFrameSDIF = class( TTreeNode<TMatrixSDIF> )
+     TFrameSDIF = class( TTreeNode<TFileSDIF,TMatrixSDIF> )
      private
      protected
        _Signature :String;
@@ -146,16 +146,17 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        class function ReadCreate( const F_:TFileStream; const H_:TFrameHeaderSDIF; const P_:TFileSDIF ) :TFrameSDIF; overload; virtual; abstract;
        destructor Destroy; override;
        ///// プロパティ
-       property Signature  :String      read _Signature write _Signature;
-       property StreamID   :Integer     read _StreamID  write _StreamID ;
-       property Time       :Single      read _Time      write _Time     ;
+       property Signature :String  read _Signature write _Signature;
+       property StreamID  :Integer read _StreamID  write _StreamID ;
+       property Time      :Single  read _Time      write _Time     ;
+       property TimeMin   :Single  read _Time      write _Time     ;
        ///// メソッド
        function FindMatrix( const Signature_:String ) :TMatrixSDIF;
      end;
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TFileSDIF<_TFrame_>
 
-     TFileSDIF<_TFrame_:TFrameSDIF> = class( TTreeNode<_TFrame_> )
+     TFileSDIF<_TFrame_:TFrameSDIF> = class( TTreeRoot<_TFrame_> )
      private
        class var _Reg :TRegEx;
      protected
@@ -567,17 +568,53 @@ end;
 
 procedure TFileSDIF<_TFrame_>.LoadFromFileBin( const FileName_:String );
 var
+   P :TFileSDIF;
    F :TFileStream;
+   MinI, MaxI, I :Integer;
+   C :TFrameSDIF;
+   Cs :TRangeArray<TFrameSDIF>;
 begin
-     DeleteChilds;
+     P := TFileSDIF.Create;
 
      F := TFileStream.Create( FileName_, fmOpenRead );
 
      F.Read( _Header, SizeOf( _Header ) );
 
-     while F.Position < F.Size do _TFrame_.ReadCreate( F, TFileSDIF( Self ) );
+     MinI := 0;
+     MaxI := 0;
+
+     while F.Position < F.Size do
+     begin
+          with _TFrame_.ReadCreate( F, P ) do
+          begin
+               if StreamID < MinI then MinI := StreamID
+                                  else
+               if MaxI < StreamID then MaxI := StreamID;
+          end;
+     end;
 
      F.Free;
+
+     Cs.MinI := MinI;
+     Cs.MaxI := MaxI;
+
+     for I := 0 to P.ChildsN-1 do
+     begin
+          C := P.Childs[ I ];
+
+          Cs[ C.StreamID ] := C;
+     end;
+
+     DeleteChilds;
+
+     for I := MinI to MaxI do
+     begin
+          C := Cs[ I ];
+
+          if Assigned( C ) then C.Paren := TFileSDIF( Self );
+     end;
+
+     P.Free;     
 end;
 
 procedure TFileSDIF<_TFrame_>.SaveToFileBin( const FileName_:String );
