@@ -41,7 +41,15 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      TFrame1ASO = class( TFrameSDIF )
      private
      protected
+       ///// アクセス
+       function GetClss :String;
+       function GetDura :Single;
+       function GetTimeMax :Single;
      public
+       ///// プロパティ
+       property Clss    :String read GetClss   ;
+       property Dura    :Single read GetDura   ;
+       property TimeMax :Single read GetTimeMax;
        ///// メソッド
        class function Select( const Clss_:String ) :CFrameSDIF; reintroduce; virtual;
        class function ReadCreate( const F_:TFileStream; const H_:TFrameHeaderSDIF; const P_:TFileSDIF ) :TFrameSDIF; override;
@@ -116,6 +124,23 @@ end;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
 
+/////////////////////////////////////////////////////////////////////// アクセス
+
+function TFrame1ASO.GetClss :String;
+begin
+     Result := TMatrixChar( FindMatrix( 'clss' ) ).Lines[ 0 ];
+end;
+
+function TFrame1ASO.GetDura :Single;
+begin
+     Result := TMatrixFlo4( FindMatrix( 'dura' ) ).Values[ 0, 0 ];
+end;
+
+function TFrame1ASO.GetTimeMax :Single;
+begin
+     Result := Time + Dura;
+end;
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
 
 /////////////////////////////////////////////////////////////////////// メソッド
@@ -156,14 +181,14 @@ end;
 
 class function TFrame1ASO.ReadCreate( const F_:TFileStream; const H_:TFrameHeaderSDIF; const P_:TFileSDIF ) :TFrameSDIF;
 var
-   P :TFrameSDIF;
+   P :TFrame1ASO;
    N :Integer;
 begin
-     P := TFrameSDIF.Create;
+     P := TFrame1ASO.Create;
 
      for N := 1 to H_.MatrixCount do TMatrixSDIF.ReadCreate( F_, P );
 
-     Result := Select( TMatrixChar( P.FindMatrix( 'clss' ) ).Lines[ 0 ] ).Create( P_ );
+     Result := Select( P.Clss ).Create( P_ );
 
      for N := 1 to P.ChildsN do P.Head.Paren := TMatrixSDIF( Result );
 
