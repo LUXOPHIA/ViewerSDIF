@@ -107,7 +107,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
      _FileSDIF := TFileSDIF.Create;
 
-     _FileSDIF.LoadFromFileBin( '..\..\_DATA\Treatments11.trt' );
+     _FileSDIF.LoadFromFileBin( '..\..\_DATA\170918-test1.trt' );
 
      ShowSDIF;
 end;
